@@ -1,1 +1,1 @@
-git checkout separate-servers && git pull && MARKER=staging node ./envs/create-env.js && npm install && tmux && node ./index.js
+git checkout master && git pull && MARKER=staging node ./envs/create-env.js && npm install && tmux && node ./index.js
