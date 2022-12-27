@@ -26,11 +26,11 @@ function App({
     AuthService.config(authConfig);
     AuthManagementService.config(authConfig);
 
-    app.get('/auth-config', (req, res) => {
+    app.get('/api/auth-config', (req, res) => {
         res.status(200).json(authConfig);
     })
 
-    app.get('/mocked-me', users.mockedMe)
+    app.get('/api/mocked-me', users.mockedMe)
 
     app.use(
         '/api/:userId/workspace/:workspaceId',
