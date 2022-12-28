@@ -1,27 +1,7 @@
-const jwt = require('express-jwt').expressjwt;
-const jwksRsa = require('jwks-rsa');
 const DbService = require('../DbService');
 const { ObjectId } = require('mongodb');
 
-const AuthService = {
-    config(authConfig) {
-        this.checkJwt = !process.env.SKIP_AUTH0
-            ? jwt({
-                secret: jwksRsa.expressJwtSecret({
-                    cache: true,
-                    rateLimit: true,
-                    jwksRequestsPerMinute: 5,
-                    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`
-                }),
-                audience: authConfig.audience,
-                issuer: `https://${authConfig.domain}/`,
-                algorithms: ['RS256'],
-            })
-            : (req, res, next) => {
-                next();
-            };
-    },
-
+const AccessService = {
     checkUserApiAccess(req, res, next) {
         const { userId } = req.params;
         if (!userId) {
@@ -63,4 +43,4 @@ const AuthService = {
     },
 }
 
-module.exports = AuthService;
+module.exports = AccessService;

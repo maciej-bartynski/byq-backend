@@ -1,19 +1,13 @@
 const express = require('express');
-// const https = require('https');
 const http = require('http');
 const cors = require('cors');
 const router = require('./routes/router');
 const workspaceRouter = require('./routes/workspaceRouter');
 const bodyParser = require('body-parser');
 const DbService = require('./services/DbService');
-const AuthService = require('./services/AuthService');
-const users = require('./routes/users');
-const { AuthManagementService } = require('./services/AuthManagementService');
+const AccessService = require('./services/AccessService');
 
-function App({
-    authConfig,
-    httpsServerOptions,
-}) {
+function App() {
     const app = express();
     const port = process.env.PORT;
     app.use(cors());
@@ -23,31 +17,21 @@ function App({
     }));
 
     DbService.connectDb();
-    AuthService.config(authConfig);
-    AuthManagementService.config(authConfig);
-
-    app.get('/api/auth-config', (req, res) => {
-        res.status(200).json(authConfig);
-    })
-
-    app.get('/api/mocked-me', users.mockedMe)
 
     app.use(
         '/api/:userId/workspace/:workspaceId',
-        AuthService.checkJwt,
-        AuthService.checkUserApiAccess,
-        AuthService.checkWorkspaceApiAccess,
+        AccessService.checkUserApiAccess,
+        AccessService.checkWorkspaceApiAccess,
         workspaceRouter
     )
 
     app.use(
         '/api/:userId',
-        AuthService.checkJwt,
-        AuthService.checkUserApiAccess,
+        AccessService.checkUserApiAccess,
         router
     )
 
-    http.createServer(httpsServerOptions, app).listen(port, () => {
+    http.createServer(undefined, app).listen(port, () => {
         console.log(`Listening on port ${port}, server HTTP`)
     })
 }
